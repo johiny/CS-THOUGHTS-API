@@ -1,10 +1,14 @@
 import express from "express"
 import dotenv from "dotenv"
-import Router from "./Router.js"
+import Router from "./Router"
 
+// enviroment variables config
 dotenv.config()
-const app = express()
 const port = process.env.PORT
+
+// api config
+const app = express()
+app.use(express.json())
 Router(app)
 
 app.listen(port, () => {
