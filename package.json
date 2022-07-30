@@ -17,7 +17,7 @@
   },
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "run": "node index",
+    "build": "tsc -p ./ -w",
     "lint": "eslint"
   },
   "dependencies": {

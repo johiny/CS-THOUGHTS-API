@@ -1,7 +1,7 @@
 import express from "express"
 import _ from 'lodash'
 const router = express.Router()
-let thoughtsArray = [{id: 1, name: "pancarsio", content: "cs50 is the best"},{id: 2, name: "calamardo", content: "cs50 is trash!"},{id: 3, name: "toronja", content: "cs50 was good"}]
+let thoughtsArray = [{id: 1, name: "pancrasio", content: "cs50 is the best"},{id: 2, name: "calamardo", content: "cs50 is trash!"},{id: 3, name: "toronja", content: "cs50 was good"}]
 
 router.get("/", (req, res) => {
   res.status(200).json(thoughtsArray)
@@ -39,7 +39,6 @@ router.patch("/:id", (req, res) => {
   const id = parseInt(req.params.id)
   const newValues = req.body
   const thoughtIndex = thoughtsArray.findIndex((thought) => thought.id === id)
-
   if(thoughtIndex > -1){
       for(const key of Object.keys(newValues)){
         thoughtsArray[thoughtIndex][key] = newValues[key]
