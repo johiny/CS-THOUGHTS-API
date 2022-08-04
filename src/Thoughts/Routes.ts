@@ -1,66 +1,86 @@
 import express from "express"
-import _ from 'lodash'
+import { PrismaClient } from "@prisma/client"
+import { authorizedKeysToChangeOnUpdate, requiredValuesToCreateThought, feelingEnum } from "./thoughtModel"
 const router = express.Router()
+const prisma = new PrismaClient()
+
 let thoughtsArray = [{id: 1, name: "pancrasio", content: "cs50 is the best"},{id: 2, name: "calamardo", content: "cs50 is trash!"},{id: 3, name: "toronja", content: "cs50 was good"}]
 
-router.get("/", (req, res) => {
-  res.status(200).json(thoughtsArray)
+router.get("/", async (req, res) => {
+  const thoughts = await prisma.thought.findMany()
+  res.status(200).json(thoughts)
 })
 
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id)
-  for(const thought of thoughtsArray)
-  {
-    if(thought.id === id)
-    {
-      res.status(200).json(thought)
-      return
-    }
+  const thought = await prisma.thought.findUnique({where :{ id : id}})
+  if(thought){
+    res.status(200).json(thought)
   }
-  res.status(404).json({ message : "no se encontro el thought"})
+  else{
+    res.status(404).json({ message : "no se encontro el thought"})
+  }
 })
 
-router.post("/", (req, res) => {
-  const newThought = req.body
-  const rules = ["name", "content"]
+router.post("/", async (req, res) => {
+  let newThought = req.body
   for(const key in newThought){
-    if(!rules.includes(key)){
+    if(!requiredValuesToCreateThought.includes(key)){
       res.status(400).json({ message : "parametros equivocados!"})
       return
     }
   }
-  const lastThoughtId = thoughtsArray?.at(-1)?.id || 0
-  thoughtsArray.push({ id : lastThoughtId + 1 , ...newThought})
-  res.status(201).json({message: "the thought has been created",
-...newThought})
+  if(!(feelingEnum.includes(newThought.feeling))){
+    res.status(418).json({ message : "Trying to break my db?"})
+      return
+  }
+  newThought = await prisma.thought.create({
+    data: newThought})
+  if(newThought){
+    res.status(201).json({message: "the thought has been created",
+  ...newThought})
+    return
+  }
+    else{
+    res.status(444).json({message: "the thought cannot be created try again"})
+  }
 })
 
-router.patch("/:id", (req, res) => {
+router.patch("/:id", async (req, res) => {
   const id = parseInt(req.params.id)
   const newValues = req.body
-  const thoughtIndex = thoughtsArray.findIndex((thought) => thought.id === id)
-  if(thoughtIndex > -1){
-      for(const key of Object.keys(newValues)){
-        thoughtsArray[thoughtIndex][key] = newValues[key]
-      }
-      res.status(200).json({message: "The thought has been modified", newValues: thoughtsArray[thoughtIndex]})
-      return
-    }
 
-  res.status(404).json({message: "The thought you're trying to edit doesn't exist"})
+      for(const key in newValues){
+        if(!(authorizedKeysToChangeOnUpdate.includes(key))){
+          res.status(404).json({message: `you are using incorrect parameters you can only update thought'byUsername, content and feeling fields`})
+          return
+        }
+      }
+
+      if(newValues?.feeling){
+        if(!(feelingEnum.includes(newValues.feeling))){
+          res.status(418).json({ message : "Trying to break my db?"})
+          return
+        }
+      }
+
+      const updateThought = await prisma.thought.update({
+        where: {id: id},
+        data: newValues
+      })
+      if(updateThought){
+        res.status(200).json({message: "The thought has been modified", ...updateThought})
+        return
+      }
+      else{
+        res.status(404).json({message: "The thought you're trying to edit doesn't exist"})
+      }
 })
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   const id = parseInt(req.params.id)
-  let thoughtDeleted = {}
-  thoughtsArray = thoughtsArray.filter((thought) => {
-    if(thought.id === id){
-      thoughtDeleted = thought
-      return false
-    }
-    return true
-  })
-  if(!_.isEmpty(thoughtDeleted)){
+  const thoughtDeleted = await prisma.thought.delete({where:{id: id}})
+  if(thoughtDeleted){
     res.status(200).json({message: "The thought has been deleted"})
     return
   }
