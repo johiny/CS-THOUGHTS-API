@@ -5,13 +5,13 @@ const router = express.Router()
 const prisma = new PrismaClient()
 
 router.get("/", async (req, res) => {
-  const thoughts = await prisma.thought.findMany()
+  const thoughts = await prisma.thoughts.findMany()
   res.status(200).json(thoughts)
 })
 
 router.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id)
-  const thought = await prisma.thought.findUnique({where :{ id : id}})
+  const thought = await prisma.thoughts.findUnique({where :{ id : id}})
   if(thought){
     res.status(200).json(thought)
   }
@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
     res.status(418).json({ message : "Trying to break my db?"})
       return
   }
-  newThought = await prisma.thought.create({
+  newThought = await prisma.thoughts.create({
     data: newThought})
   if(newThought){
     res.status(201).json({message: "the thought has been created",
@@ -62,7 +62,7 @@ router.patch("/:id", async (req, res) => {
         }
       }
 
-      const updateThought = await prisma.thought.update({
+      const updateThought = await prisma.thoughts.update({
         where: {id: id},
         data: newValues
       })
@@ -77,7 +77,7 @@ router.patch("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   const id = parseInt(req.params.id)
-  const thoughtDeleted = await prisma.thought.delete({where:{id: id}})
+  const thoughtDeleted = await prisma.thoughts.delete({where:{id: id}})
   if(thoughtDeleted){
     res.status(200).json({message: "The thought has been deleted"})
     return
