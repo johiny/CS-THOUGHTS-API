@@ -7,7 +7,7 @@ const Router = (app: Express) => {
   app.use("/api/v1", router)
   router.use("/thoughts", thougthsRoutes)
   app.get("/", (req, res) => {
-    res.send("ha nacido!, El supremo backend ha llegado!")
+    res.send("hello! I'm CS50-Thoughts API make me a query!")
   })
 }
 

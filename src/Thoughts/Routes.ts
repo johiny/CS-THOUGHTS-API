@@ -4,8 +4,6 @@ import { authorizedKeysToChangeOnUpdate, requiredValuesToCreateThought, feelingE
 const router = express.Router()
 const prisma = new PrismaClient()
 
-let thoughtsArray = [{id: 1, name: "pancrasio", content: "cs50 is the best"},{id: 2, name: "calamardo", content: "cs50 is trash!"},{id: 3, name: "toronja", content: "cs50 was good"}]
-
 router.get("/", async (req, res) => {
   const thoughts = await prisma.thought.findMany()
   res.status(200).json(thoughts)
