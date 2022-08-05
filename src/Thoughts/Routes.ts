@@ -86,4 +86,32 @@ router.delete("/:id", async (req, res) => {
     res.status(404).json({message: "The thought you're trying to delete doesn't exist"})
   }
 })
+
+router.patch("/:id/upVote", async (req, res) => {
+  const id = parseInt(req.params.id)
+  const thoughtNewValues = await prisma.thoughts.update({
+    where: {id: id},
+    data: {upVotes : {increment: 1}}
+  })
+  if(thoughtNewValues){
+    res.status(200).json({message: "the upvotes has been updated", ...thoughtNewValues})
+  }
+  else{
+    res.status(404).json({message:"thought not found or other error"})
+  }
+})
+
+router.patch("/:id/downVote", async (req, res) => {
+  const id = parseInt(req.params.id)
+  const thoughtNewValues = await prisma.thoughts.update({
+    where: {id: id},
+    data: {DownVotes: {increment: 1}}
+  })
+  if(thoughtNewValues){
+    res.status(200).json({message: "the downvotes has been updated", ...thoughtNewValues})
+  }
+  else{
+    res.status(404).json({message:"thought not found or other error"})
+  }
+})
 export default router
