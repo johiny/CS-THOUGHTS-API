@@ -1,8 +1,10 @@
 import express from "express"
 import { PrismaClient } from "@prisma/client"
 import { authorizedKeysToChangeOnUpdate, requiredValuesToCreateThought, feelingEnum } from "./thoughtModel"
+import coolDownService from "./coolDownService"
 const router = express.Router()
 const prisma = new PrismaClient()
+const coolDown = new coolDownService()
 
 router.get("/", async (req, res) => {
   const thoughts = await prisma.thoughts.findMany()
@@ -89,28 +91,43 @@ router.delete("/:id", async (req, res) => {
 
 router.patch("/:id/upVote", async (req, res) => {
   const id = parseInt(req.params.id)
+  const ip = req.ip
+  console.log(coolDown.ipList)
+  if(coolDown.verifyCoolDown(ip, id, "positive")){
+    res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
+    return
+  }
+  try{
   const thoughtNewValues = await prisma.thoughts.update({
     where: {id: id},
     data: {upVotes : {increment: 1}}
   })
-  if(thoughtNewValues){
-    res.status(200).json({message: "the upvotes has been updated", ...thoughtNewValues})
-  }
-  else{
+  coolDown.addToIpList(ip, id, "positive")
+  res.status(200).json({message: "the upvotes has been updated", ...thoughtNewValues})}
+  catch(err){
+    console.log(err)
     res.status(404).json({message:"thought not found or other error"})
   }
 })
 
 router.patch("/:id/downVote", async (req, res) => {
   const id = parseInt(req.params.id)
+  const ip = req.ip
+  console.log(coolDown.ipList)
+  if(coolDown.verifyCoolDown(ip, id, "negative")){
+    res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
+    return
+  }
+  try{
   const thoughtNewValues = await prisma.thoughts.update({
     where: {id: id},
-    data: {DownVotes: {increment: 1}}
+    data: {DownVotes : {increment: 1}}
   })
-  if(thoughtNewValues){
-    res.status(200).json({message: "the downvotes has been updated", ...thoughtNewValues})
+  coolDown.addToIpList(ip, id, "negative")
+  res.status(200).json({message: "the downvotes has been updated", ...thoughtNewValues})
   }
-  else{
+  catch(err){
+    console.log(err)
     res.status(404).json({message:"thought not found or other error"})
   }
 })

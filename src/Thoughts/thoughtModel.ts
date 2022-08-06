@@ -11,5 +11,5 @@ type Thought = {
 const authorizedKeysToChangeOnUpdate = ["byUsername","content","feeling"]
 const requiredValuesToCreateThought = ["byUsername","content","feeling"]
 const feelingEnum = ["positive", "negative"]
-
-export {Thought, authorizedKeysToChangeOnUpdate, requiredValuesToCreateThought, feelingEnum}
+type feelingType = "positive" | "negative"
+export {Thought, authorizedKeysToChangeOnUpdate, requiredValuesToCreateThought, feelingEnum, feelingType}
