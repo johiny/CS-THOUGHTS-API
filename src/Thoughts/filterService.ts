@@ -44,7 +44,7 @@ const queryParamsSanitizer = (queryParams : queryParams ) : santizedParams | nul
   // add verified filters to their place
   for(const key in queryParams){
     if(key === "feeling"){
-      Filters.where === {[key] : queryParams[key]}
+      Filters.where = {[key] : queryParams[key]}
     }
     else{
       Filters.orderBy.push({[key] : queryParams[key]})
