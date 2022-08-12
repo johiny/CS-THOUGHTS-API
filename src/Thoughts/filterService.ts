@@ -1,5 +1,5 @@
 import { feelingEnum, supportedFilters, supportedFiltersValues } from "./thoughtModel"
-
+import  express  from "express"
 const defaultFilter = {
   defaultFeeling : feelingEnum,
   defaultDate : "desc",
@@ -14,7 +14,8 @@ type santizedParams = {
   where? : Object
   orderBy: Object[]
 }
-const queryParamsSanitizer = (queryParams : queryParams ) : santizedParams | null => {
+// convert sanitizer from a simple function to a middleware
+const queryParamsSanitizer = (req: express.Request, res: express.Response, next: express.NextFunction) => {
 
   // verify if request has the supported filters
   for(const key in queryParams){

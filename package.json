@@ -18,7 +18,7 @@
     "typescript": "^4.7.4"
   },
   "scripts": {
-    "start" : "node dist/index.js",
+    "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint"
@@ -27,6 +27,7 @@
     "@prisma/client": "^4.1.1",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "yup": "^0.32.11"
   }
 }
