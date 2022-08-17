@@ -1,7 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import Router from "./Router"
-import {jsonError} from "./Middlewares/errorMiddlewares"
+import {jsonError, errorCatcher} from "./Middlewares/errorMiddlewares"
 
 // api config
 dotenv.config()
@@ -12,6 +12,7 @@ const app = express()
 app.use(express.json())
 app.use(jsonError)
 Router(app)
+app.use(errorCatcher)
 
 app.listen(port, () => {
   console.log(`Backend funcionando en: http://localhost:${port}`)

@@ -15,7 +15,7 @@ type santizedParams = {
   orderBy: Object[]
 }
 // convert sanitizer from a simple function to a middleware
-const queryParamsSanitizer = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const queryParamsSanitizer = (queryParams : queryParams) : santizedParams | null => {
 
   // verify if request has the supported filters
   for(const key in queryParams){
