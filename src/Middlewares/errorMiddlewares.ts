@@ -15,7 +15,7 @@ const errorCatcher = (err: RequestError, req: express.Request, res: express.Resp
     res.status(400).json({message: 'error terrible', errorList: err.issues})
   }
   else{
-    res.json({message: 'error terrible', error: err})
+    res.status(err.status || 404).json({message: 'error terrible', error: err})
   }
 }
 
