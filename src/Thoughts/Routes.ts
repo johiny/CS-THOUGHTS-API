@@ -2,7 +2,7 @@ import express from "express"
 import { PrismaClient } from "@prisma/client"
 import { authorizedKeysToChangeOnUpdate, requiredValuesToCreateThought, feelingEnum} from "./thoughtModel"
 import coolDownService from "./coolDownService"
-//import {queryParamsSanitizer, queryParams} from "./ownFilterService"
+import {queryBuilder, queryParams} from "./ownFilterService"
 import { validationFactory } from "../Middlewares/dataValidationMiddlewares"
 import { thoughtsFilters } from "./validationSchemas"
 const router = express.Router()
@@ -10,12 +10,12 @@ const prisma = new PrismaClient()
 const coolDown = new coolDownService()
 
 router.get("/", validationFactory("query", thoughtsFilters), async (req, res) => {
-  //const thoughts = await prisma.thoughts.findMany({
-    //where: Filters.where,
-    //orderBy : Filters.orderBy
-  //})
-  //res.status(200).json(thoughts)
-  res.json({message: 'fake thougths everything work well!'})
+  const filters = queryBuilder(req.query as queryParams)
+  const thoughts = await prisma.thoughts.findMany({
+    where: filters.where,
+    orderBy : filters.orderBy
+  })
+  res.status(200).json(thoughts)
 })
 
 router.get("/:id", async (req, res) => {
