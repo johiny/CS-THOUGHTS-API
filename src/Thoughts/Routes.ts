@@ -7,7 +7,7 @@ import { thoughtsFilters, getThoughtbyID, createThought, modifyThought } from ".
 
 const router = express.Router()
 const prisma = new PrismaClient()
-const coolDown = new coolDownService()
+// const coolDown = new coolDownService()
 
 router.get("/", validationFactory("query", thoughtsFilters), async (req, res, next) => {
   const filters = queryBuilder(req.query as queryParams)
@@ -74,42 +74,42 @@ router.delete("/:id", validationFactory('params', getThoughtbyID), async (req, r
   }
 })
 
-router.patch("/:id/upVote", async (req, res, next) => {
-  const id = parseInt(req.params.id)
-  const ip = req.ip
-  if(coolDown.verifyCoolDown(ip, id, "positive")){
-    res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
-    return
-  }
-  try{
-  const thoughtNewValues = await prisma.thoughts.update({
-    where: {id: id},
-    data: {upVotes : {increment: 1}}
-  })
-  coolDown.addToIpList(ip, id, "positive")
-  res.status(200).json({message: "the upvotes has been updated", ...thoughtNewValues})}
-  catch(err){
-    next(err)
-  }
-})
+// router.patch("/:id/upVote", async (req, res, next) => {
+//   const id = parseInt(req.params.id)
+//   const ip = req.ip
+//   if(coolDown.verifyCoolDown(ip, id, "positive")){
+//     res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
+//     return
+//   }
+//   try{
+//   const thoughtNewValues = await prisma.thoughts.update({
+//     where: {id: id},
+//     data: {upVotes : {increment: 1}}
+//   })
+//   coolDown.addToIpList(ip, id, "positive")
+//   res.status(200).json({message: "the upvotes has been updated", ...thoughtNewValues})}
+//   catch(err){
+//     next(err)
+//   }
+// })
 
-router.patch("/:id/downVote", async (req, res, next) => {
-  const id = parseInt(req.params.id)
-  const ip = req.ip
-  if(coolDown.verifyCoolDown(ip, id, "negative")){
-    res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
-    return
-  }
-  try{
-  const thoughtNewValues = await prisma.thoughts.update({
-    where: {id: id},
-    data: {DownVotes : {increment: 1}}
-  })
-  coolDown.addToIpList(ip, id, "negative")
-  res.status(200).json({message: "the downvotes has been updated", ...thoughtNewValues})
-  }
-  catch(err){
-    next(err)
-  }
-})
+// router.patch("/:id/downVote", async (req, res, next) => {
+//   const id = parseInt(req.params.id)
+//   const ip = req.ip
+//   if(coolDown.verifyCoolDown(ip, id, "negative")){
+//     res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
+//     return
+//   }
+//   try{
+//   const thoughtNewValues = await prisma.thoughts.update({
+//     where: {id: id},
+//     data: {DownVotes : {increment: 1}}
+//   })
+//   coolDown.addToIpList(ip, id, "negative")
+//   res.status(200).json({message: "the downvotes has been updated", ...thoughtNewValues})
+//   }
+//   catch(err){
+//     next(err)
+//   }
+// })
 export default router
