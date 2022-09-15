@@ -7,7 +7,9 @@ const thoughtsFilters = zod_1.z.object({
     feeling: zod_1.z.enum(thoughtModel_1.feelingEnum).optional(),
     upVotes: zod_1.z.enum(thoughtModel_1.supportedFiltersValues).optional(),
     DownVotes: zod_1.z.enum(thoughtModel_1.supportedFiltersValues).optional(),
-    createdDate: zod_1.z.enum(thoughtModel_1.supportedFiltersValues).optional().default('desc')
+    createdDate: zod_1.z.enum(thoughtModel_1.supportedFiltersValues).optional().default('desc'),
+    skip: zod_1.z.preprocess(val => Number(val), zod_1.z.number().positive()).optional(),
+    take: zod_1.z.preprocess(val => Number(val), zod_1.z.number().positive()).optional()
 }).strict();
 exports.thoughtsFilters = thoughtsFilters;
 const getThoughtbyID = zod_1.z.object({

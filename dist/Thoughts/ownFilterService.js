@@ -33,12 +33,20 @@ const queryBuilder = (queryParams) => {
     // object that will contain sanitize filters
     const Filters = {
         where: undefined,
-        orderBy: []
+        orderBy: [],
+        skip: 0,
+        take: 100,
     };
     // add verified filters to their place
     for (const key in queryParams) {
         if (key === "feeling") {
             Filters.where = { [key]: queryParams[key] };
+        }
+        else if (key === "skip") {
+            Filters.skip = parseInt(queryParams[key]);
+        }
+        else if (key === "take") {
+            Filters.take = parseInt(queryParams[key]);
         }
         else {
             Filters.orderBy.push({ [key]: queryParams[key] });
