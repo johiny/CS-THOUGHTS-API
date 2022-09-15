@@ -14,6 +14,4 @@ app.use(jsonError)
 Router(app)
 app.use(errorCatcher)
 
-app.listen(port, () => {
-  console.log(`Backend funcionando en: http://localhost:${port}`)
-})
+app.listen(port)
