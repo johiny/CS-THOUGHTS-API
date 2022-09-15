@@ -13,6 +13,8 @@ type queryParams  = {
 type organizedQueryParams = {
   where: Object | undefined
   orderBy: Object[]
+  skip: number
+  take:number
 }
 // convert sanitizer from a simple function to a middleware
 // const queryParamsSanitizer = (queryParams : queryParams) : santizedParams | null => {
@@ -42,13 +44,21 @@ const queryBuilder = (queryParams: queryParams) : organizedQueryParams => {
   // object that will contain sanitize filters
   const Filters : organizedQueryParams = {
     where: undefined,
-    orderBy: []
+    orderBy: [],
+    skip: 0,
+    take: 100,
   }
 
   // add verified filters to their place
   for(const key in queryParams){
     if(key === "feeling"){
       Filters.where = {[key] : queryParams[key]}
+    }
+    else if(key === "skip"){
+      Filters.skip = parseInt(queryParams[key])
+    }
+    else if(key === "take"){
+      Filters.take = parseInt(queryParams[key])
     }
     else{
       Filters.orderBy.push({[key] : queryParams[key]})

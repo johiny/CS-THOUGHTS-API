@@ -12,10 +12,7 @@ const coolDown = new coolDownService()
 router.get("/", validationFactory("query", thoughtsFilters), async (req, res, next) => {
   const filters = queryBuilder(req.query as queryParams)
   try{
-  const thoughts = await prisma.thoughts.findMany({
-    where: filters.where,
-    orderBy : filters.orderBy
-  })
+  const thoughts = await prisma.thoughts.findMany(filters)
   res.status(200).json(thoughts)
   return
 }

@@ -5,7 +5,9 @@ const thoughtsFilters = z.object({
     feeling: z.enum(feelingEnum).optional(),
     upVotes: z.enum(supportedFiltersValues).optional(),
     DownVotes: z.enum(supportedFiltersValues).optional(),
-    createdDate: z.enum(supportedFiltersValues).optional().default('desc')
+    createdDate: z.enum(supportedFiltersValues).optional().default('desc'),
+    skip: z.preprocess(val => Number(val), z.number().positive()).optional(),
+    take: z.preprocess(val => Number(val), z.number().positive()).optional()
 }).strict()
 
 const getThoughtbyID = z.object({
