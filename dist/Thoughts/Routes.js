@@ -14,17 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const client_1 = require("@prisma/client");
+const coolDownService_1 = __importDefault(require("./coolDownService"));
 const ownFilterService_1 = require("./ownFilterService");
 const dataValidationMiddlewares_1 = require("../Middlewares/dataValidationMiddlewares");
 const validationSchemas_1 = require("./validationSchemas");
 const router = express_1.default.Router();
 const prisma = new client_1.PrismaClient();
-// const coolDown = new coolDownService()
+const coolDown = new coolDownService_1.default();
 router.get("/", (0, dataValidationMiddlewares_1.validationFactory)("query", validationSchemas_1.thoughtsFilters), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const filters = (0, ownFilterService_1.queryBuilder)(req.query);
     try {
         const thoughts = yield prisma.thoughts.findMany(filters);
         res.status(200).json(thoughts);
+        prisma.$disconnect();
         return;
     }
     catch (err) {
@@ -81,42 +83,43 @@ router.delete("/:id", (0, dataValidationMiddlewares_1.validationFactory)('params
         next(err);
     }
 }));
-// router.patch("/:id/upVote", async (req, res, next) => {
-//   const id = parseInt(req.params.id)
-//   const ip = req.ip
-//   if(coolDown.verifyCoolDown(ip, id, "positive")){
-//     res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
-//     return
-//   }
-//   try{
-//   const thoughtNewValues = await prisma.thoughts.update({
-//     where: {id: id},
-//     data: {upVotes : {increment: 1}}
-//   })
-//   coolDown.addToIpList(ip, id, "positive")
-//   res.status(200).json({message: "the upvotes has been updated", ...thoughtNewValues})}
-//   catch(err){
-//     next(err)
-//   }
-// })
-// router.patch("/:id/downVote", async (req, res, next) => {
-//   const id = parseInt(req.params.id)
-//   const ip = req.ip
-//   if(coolDown.verifyCoolDown(ip, id, "negative")){
-//     res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
-//     return
-//   }
-//   try{
-//   const thoughtNewValues = await prisma.thoughts.update({
-//     where: {id: id},
-//     data: {DownVotes : {increment: 1}}
-//   })
-//   coolDown.addToIpList(ip, id, "negative")
-//   res.status(200).json({message: "the downvotes has been updated", ...thoughtNewValues})
-//   }
-//   catch(err){
-//     next(err)
-//   }
-// })
+router.patch("/:id/upVote", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = parseInt(req.params.id);
+    const ip = req.ip;
+    if (coolDown.verifyCoolDown(ip, id, "positive")) {
+        res.status(425).json({ message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly" });
+        return;
+    }
+    try {
+        const thoughtNewValues = yield prisma.thoughts.update({
+            where: { id: id },
+            data: { upVotes: { increment: 1 } }
+        });
+        coolDown.addToIpList(ip, id, "positive");
+        res.status(200).json(Object.assign({ message: "the upvotes has been updated" }, thoughtNewValues));
+    }
+    catch (err) {
+        next(err);
+    }
+}));
+router.patch("/:id/downVote", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = parseInt(req.params.id);
+    const ip = req.ip;
+    if (coolDown.verifyCoolDown(ip, id, "negative")) {
+        res.status(425).json({ message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly" });
+        return;
+    }
+    try {
+        const thoughtNewValues = yield prisma.thoughts.update({
+            where: { id: id },
+            data: { DownVotes: { increment: 1 } }
+        });
+        coolDown.addToIpList(ip, id, "negative");
+        res.status(200).json(Object.assign({ message: "the downvotes has been updated" }, thoughtNewValues));
+    }
+    catch (err) {
+        next(err);
+    }
+}));
 exports.default = router;
 //# sourceMappingURL=Routes.js.map
