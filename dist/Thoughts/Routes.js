@@ -26,7 +26,6 @@ router.get("/", (0, dataValidationMiddlewares_1.validationFactory)("query", vali
     try {
         const thoughts = yield prisma.thoughts.findMany(filters);
         res.status(200).json(thoughts);
-        prisma.$disconnect();
         return;
     }
     catch (err) {

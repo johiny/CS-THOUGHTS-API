@@ -14,7 +14,6 @@ router.get("/", validationFactory("query", thoughtsFilters), async (req, res, ne
   try{
   const thoughts = await prisma.thoughts.findMany(filters)
   res.status(200).json(thoughts)
-  prisma.$disconnect()
   return
 }
   catch(err){

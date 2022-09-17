@@ -9,6 +9,9 @@ const Router = (app: Express) => {
   app.get("/", (req, res) => {
     res.send("hello! I'm CS50-Thoughts API make me a query!")
   })
+  app.get("/status", (req, res) => {
+    res.status(200).json({message: 'everything okay!'})
+  })
 }
 
 export default Router
