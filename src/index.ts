@@ -3,12 +3,16 @@ import dotenv from "dotenv"
 import Router from "./Router"
 import {jsonError, errorCatcher} from "./Middlewares/errorMiddlewares"
 
+const cors = require('cors')
 // api config
 dotenv.config()
 const port = process.env.PORT
 
 // api start
 const app = express()
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGIN
+}))
 app.use(express.json())
 app.use(jsonError)
 Router(app)
