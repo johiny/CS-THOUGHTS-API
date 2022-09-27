@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class coolDownService {
     constructor() {
         this.ipList = {};
-        this.coolDownTime = 360000;
+        this.coolDownTime = 3600000;
     }
     addToIpList(ip, thoughtId, feeling) {
         if (!this.ipList[ip]) {
