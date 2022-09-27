@@ -49,7 +49,7 @@ router.post("/", (0, dataValidationMiddlewares_1.validationFactory)('body', vali
         newThought = yield prisma.thoughts.create({
             data: newThought
         });
-        res.status(201).json(Object.assign({ message: "the thought has been created" }, newThought));
+        res.status(201).json({ message: "the thought has been created", newThought: newThought });
         return;
     }
     catch (err) {
@@ -86,7 +86,7 @@ router.patch("/:id/upVote", (req, res, next) => __awaiter(void 0, void 0, void 0
     const id = parseInt(req.params.id);
     const ip = req.ip;
     if (coolDown.verifyCoolDown(ip, id, "positive")) {
-        res.status(425).json({ message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly" });
+        res.status(425).json({ message: "You already like this thought in less than an hour, you can only like the same comment hourly" });
         return;
     }
     try {
@@ -95,7 +95,7 @@ router.patch("/:id/upVote", (req, res, next) => __awaiter(void 0, void 0, void 0
             data: { upVotes: { increment: 1 } }
         });
         coolDown.addToIpList(ip, id, "positive");
-        res.status(200).json(Object.assign({ message: "the upvotes has been updated" }, thoughtNewValues));
+        res.status(200).json(Object.assign({ message: "Your Like has been saved!" }, thoughtNewValues));
     }
     catch (err) {
         next(err);
@@ -105,7 +105,7 @@ router.patch("/:id/downVote", (req, res, next) => __awaiter(void 0, void 0, void
     const id = parseInt(req.params.id);
     const ip = req.ip;
     if (coolDown.verifyCoolDown(ip, id, "negative")) {
-        res.status(425).json({ message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly" });
+        res.status(425).json({ message: "You already dislike this thought in less than an hour, you can only dislike the same comment hourly" });
         return;
     }
     try {
@@ -114,7 +114,7 @@ router.patch("/:id/downVote", (req, res, next) => __awaiter(void 0, void 0, void
             data: { DownVotes: { increment: 1 } }
         });
         coolDown.addToIpList(ip, id, "negative");
-        res.status(200).json(Object.assign({ message: "the downvotes has been updated" }, thoughtNewValues));
+        res.status(200).json(Object.assign({ message: "Your Dislike has been saved!" }, thoughtNewValues));
     }
     catch (err) {
         next(err);

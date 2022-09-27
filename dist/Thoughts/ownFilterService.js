@@ -35,7 +35,7 @@ const queryBuilder = (queryParams) => {
         where: undefined,
         orderBy: [],
         skip: 0,
-        take: 100,
+        take: 120,
     };
     // add verified filters to their place
     for (const key in queryParams) {
