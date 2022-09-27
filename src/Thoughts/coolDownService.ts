@@ -11,7 +11,7 @@ class coolDownService {
   coolDownTime : number
   constructor(){
     this.ipList = {}
-    this.coolDownTime = 100000
+    this.coolDownTime = 360000
   }
   addToIpList(ip : string, thoughtId : number, feeling : feelingType) {
     if(!this.ipList[ip]){
