@@ -38,7 +38,7 @@ router.post("/", validationFactory('body',  createThought), async (req, res, nex
   try{
     newThought = await prisma.thoughts.create({
       data: newThought})
-    res.status(201).json({message: "the thought has been created",...newThought})
+    res.status(201).json({message: "the thought has been created", newThought: newThought})
     return
   }
   catch(err){
@@ -78,7 +78,7 @@ router.patch("/:id/upVote", async (req, res, next) => {
   const id = parseInt(req.params.id)
   const ip = req.ip
   if(coolDown.verifyCoolDown(ip, id, "positive")){
-    res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
+    res.status(425).json({message: "You already like this thought in less than an hour, you can only like the same comment hourly"})
     return
   }
   try{
@@ -87,7 +87,7 @@ router.patch("/:id/upVote", async (req, res, next) => {
     data: {upVotes : {increment: 1}}
   })
   coolDown.addToIpList(ip, id, "positive")
-  res.status(200).json({message: "the upvotes has been updated", ...thoughtNewValues})}
+  res.status(200).json({message: "Your Like has been saved!", ...thoughtNewValues})}
   catch(err){
     next(err)
   }
@@ -97,7 +97,7 @@ router.patch("/:id/downVote", async (req, res, next) => {
   const id = parseInt(req.params.id)
   const ip = req.ip
   if(coolDown.verifyCoolDown(ip, id, "negative")){
-    res.status(425).json({message: "you already upvote this thought in less than an hour you can only upvote the same comment hourly"})
+    res.status(425).json({message: "You already dislike this thought in less than an hour, you can only dislike the same comment hourly"})
     return
   }
   try{
@@ -106,7 +106,7 @@ router.patch("/:id/downVote", async (req, res, next) => {
     data: {DownVotes : {increment: 1}}
   })
   coolDown.addToIpList(ip, id, "negative")
-  res.status(200).json({message: "the downvotes has been updated", ...thoughtNewValues})
+  res.status(200).json({message: "Your Dislike has been saved!", ...thoughtNewValues})
   }
   catch(err){
     next(err)
