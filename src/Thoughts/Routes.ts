@@ -1,13 +1,11 @@
 import express from "express"
-import { PrismaClient } from "@prisma/client"
-import coolDownService from "./coolDownService"
+import { prisma } from "../index"
+import { coolDown } from "../index"
 import {queryBuilder, queryParams} from "./ownFilterService"
 import { validationFactory } from "../Middlewares/dataValidationMiddlewares"
 import { thoughtsFilters, getThoughtbyID, createThought, modifyThought } from "./validationSchemas"
 
 const router = express.Router()
-const prisma = new PrismaClient()
-const coolDown = new coolDownService()
 
 router.get("/", validationFactory("query", thoughtsFilters), async (req, res, next) => {
   const filters = queryBuilder(req.query as queryParams)
@@ -77,8 +75,9 @@ router.delete("/:id", validationFactory('params', getThoughtbyID), async (req, r
 router.patch("/:id/upVote", async (req, res, next) => {
   const id = parseInt(req.params.id)
   const ip = req.ip
-  if(coolDown.verifyCoolDown(ip, id, "positive")){
-    res.status(425).json({message: "You already like this thought in less than an hour, you can only like the same comment hourly"})
+  const isCoolDown = coolDown.verifyCoolDown(ip, id, "positive")
+  if(isCoolDown != false){
+    res.status(425).json({message: `You already like this thought in less than an hour, you can do it again in ${isCoolDown} minutes`})
     return
   }
   try{
@@ -96,8 +95,9 @@ router.patch("/:id/upVote", async (req, res, next) => {
 router.patch("/:id/downVote", async (req, res, next) => {
   const id = parseInt(req.params.id)
   const ip = req.ip
-  if(coolDown.verifyCoolDown(ip, id, "negative")){
-    res.status(425).json({message: "You already dislike this thought in less than an hour, you can only dislike the same comment hourly"})
+  const isCoolDown = coolDown.verifyCoolDown(ip, id, "negative")
+  if(isCoolDown){
+    res.status(425).json({message: `You already dislike this thought in less than an hour,  you can do it again in ${isCoolDown} minutes`})
     return
   }
   try{

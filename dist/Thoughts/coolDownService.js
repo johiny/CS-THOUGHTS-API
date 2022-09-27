@@ -9,23 +9,19 @@ class coolDownService {
         if (!this.ipList[ip]) {
             this.ipList[ip] = {};
         }
-        if (this.ipList[ip][feeling]) {
-            this.ipList[ip][feeling].push(thoughtId);
-            setTimeout(() => {
-                this.removeFromIpList(ip, thoughtId, feeling);
-            }, this.coolDownTime);
+        if (!this.ipList[ip][feeling]) {
+            this.ipList[ip][feeling] = {};
         }
-        else {
-            this.ipList[ip][feeling] = [thoughtId];
-            setTimeout(() => {
-                this.removeFromIpList(ip, thoughtId, feeling);
-            }, this.coolDownTime);
-        }
+        let timer = setTimeout(() => {
+            this.removeFromIpList(ip, thoughtId, feeling);
+        }, this.coolDownTime);
+        this.ipList[ip][feeling][thoughtId] = { timestamp: Date.now(), timer: timer };
     }
     removeFromIpList(ip, thoughtId, feeling) {
-        this.ipList[ip][feeling] = this.ipList[ip][feeling].filter(id => !(id === thoughtId));
+        clearTimeout(this.ipList[ip][feeling][thoughtId].timer);
+        delete this.ipList[ip][feeling][thoughtId];
         for (const key in this.ipList[ip]) {
-            if (this.ipList[ip][key].length === 0) {
+            if (Object.keys(this.ipList[ip][key]).length === 0) {
                 delete this.ipList[ip][key];
             }
         }
@@ -33,20 +29,19 @@ class coolDownService {
             delete this.ipList[ip];
         }
     }
+    getTimeLeft(thought) {
+        const timeLeft = Math.ceil((this.coolDownTime - (Date.now() - thought.timestamp)) / 60000);
+        return timeLeft;
+    }
     verifyCoolDown(ip, thoughtId, feeling) {
-        var _a;
         if (this.ipList[ip]) {
-            let coolDown = false;
-            (_a = this.ipList[ip][feeling]) === null || _a === void 0 ? void 0 : _a.forEach((id) => {
-                if (id === thoughtId) {
-                    coolDown = true;
+            if (this.ipList[ip][feeling]) {
+                if (this.ipList[ip][feeling][thoughtId]) {
+                    return this.getTimeLeft(this.ipList[ip][feeling][thoughtId]);
                 }
-            });
-            return coolDown;
+            }
         }
-        else {
-            return false;
-        }
+        return false;
     }
 }
 exports.default = coolDownService;
