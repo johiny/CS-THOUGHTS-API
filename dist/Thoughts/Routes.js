@@ -83,6 +83,7 @@ router.delete("/:id", (0, dataValidationMiddlewares_1.validationFactory)('params
 router.patch("/:id/upVote", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
     const ip = req.ip;
+    console.log(ip);
     const isCoolDown = index_2.coolDown.verifyCoolDown(ip, id, "positive");
     if (isCoolDown != false) {
         res.status(425).json({ message: `You already like this thought in less than an hour, you can do it again in ${isCoolDown} minutes` });

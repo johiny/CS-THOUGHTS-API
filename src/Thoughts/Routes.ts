@@ -75,6 +75,7 @@ router.delete("/:id", validationFactory('params', getThoughtbyID), async (req, r
 router.patch("/:id/upVote", async (req, res, next) => {
   const id = parseInt(req.params.id)
   const ip = req.ip
+  console.log(ip)
   const isCoolDown = coolDown.verifyCoolDown(ip, id, "positive")
   if(isCoolDown != false){
     res.status(425).json({message: `You already like this thought in less than an hour, you can do it again in ${isCoolDown} minutes`})
