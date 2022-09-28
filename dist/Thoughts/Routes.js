@@ -82,7 +82,7 @@ router.delete("/:id", (0, dataValidationMiddlewares_1.validationFactory)('params
 }));
 router.patch("/:id/upVote", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
-    const ip = req.ip;
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     console.log(ip);
     const isCoolDown = index_2.coolDown.verifyCoolDown(ip, id, "positive");
     if (isCoolDown != false) {

@@ -74,9 +74,9 @@ router.delete("/:id", validationFactory('params', getThoughtbyID), async (req, r
 
 router.patch("/:id/upVote", async (req, res, next) => {
   const id = parseInt(req.params.id)
-  const ip = req.ip
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
   console.log(ip)
-  const isCoolDown = coolDown.verifyCoolDown(ip, id, "positive")
+  const isCoolDown = coolDown.verifyCoolDown(ip as string, id, "positive")
   if(isCoolDown != false){
     res.status(425).json({message: `You already like this thought in less than an hour, you can do it again in ${isCoolDown} minutes`})
     return
@@ -86,7 +86,7 @@ router.patch("/:id/upVote", async (req, res, next) => {
     where: {id: id},
     data: {upVotes : {increment: 1}}
   })
-  coolDown.addToIpList(ip, id, "positive")
+  coolDown.addToIpList(ip as string, id, "positive")
   res.status(200).json({message: "Your Like has been saved!", ...thoughtNewValues})}
   catch(err){
     next(err)
