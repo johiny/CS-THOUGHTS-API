@@ -3,7 +3,8 @@ import dotenv from "dotenv"
 import Router from "./Router"
 import {jsonError, errorCatcher} from "./Middlewares/errorMiddlewares"
 import coolDownService from "./Thoughts/coolDownService"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from '@prisma/client'
+
 const cors = require('cors')
 
 // api config
