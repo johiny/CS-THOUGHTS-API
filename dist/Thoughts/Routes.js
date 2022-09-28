@@ -83,7 +83,6 @@ router.delete("/:id", (0, dataValidationMiddlewares_1.validationFactory)('params
 router.patch("/:id/upVote", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    console.log(ip);
     const isCoolDown = index_2.coolDown.verifyCoolDown(ip, id, "positive");
     if (isCoolDown != false) {
         res.status(425).json({ message: `You already like this thought in less than an hour, you can do it again in ${isCoolDown} minutes` });
@@ -103,7 +102,7 @@ router.patch("/:id/upVote", (req, res, next) => __awaiter(void 0, void 0, void 0
 }));
 router.patch("/:id/downVote", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
-    const ip = req.ip;
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const isCoolDown = index_2.coolDown.verifyCoolDown(ip, id, "negative");
     if (isCoolDown) {
         res.status(425).json({ message: `You already dislike this thought in less than an hour,  you can do it again in ${isCoolDown} minutes` });

@@ -75,7 +75,6 @@ router.delete("/:id", validationFactory('params', getThoughtbyID), async (req, r
 router.patch("/:id/upVote", async (req, res, next) => {
   const id = parseInt(req.params.id)
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-  console.log(ip)
   const isCoolDown = coolDown.verifyCoolDown(ip as string, id, "positive")
   if(isCoolDown != false){
     res.status(425).json({message: `You already like this thought in less than an hour, you can do it again in ${isCoolDown} minutes`})
@@ -95,8 +94,8 @@ router.patch("/:id/upVote", async (req, res, next) => {
 
 router.patch("/:id/downVote", async (req, res, next) => {
   const id = parseInt(req.params.id)
-  const ip = req.ip
-  const isCoolDown = coolDown.verifyCoolDown(ip, id, "negative")
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+  const isCoolDown = coolDown.verifyCoolDown(ip as string, id, "negative")
   if(isCoolDown){
     res.status(425).json({message: `You already dislike this thought in less than an hour,  you can do it again in ${isCoolDown} minutes`})
     return
@@ -106,7 +105,7 @@ router.patch("/:id/downVote", async (req, res, next) => {
     where: {id: id},
     data: {DownVotes : {increment: 1}}
   })
-  coolDown.addToIpList(ip, id, "negative")
+  coolDown.addToIpList(ip as string, id, "negative")
   res.status(200).json({message: "Your Dislike has been saved!", ...thoughtNewValues})
   }
   catch(err){
