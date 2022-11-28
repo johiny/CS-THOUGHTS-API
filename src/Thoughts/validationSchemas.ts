@@ -18,7 +18,8 @@ const getThoughtbyID = z.object({
 const createThought = z.object({
   byUsername : z.string().regex(new RegExp("^[A-Za-z][A-Za-z0-9]*$"), {message: "username cannot have white spaces"}).min(3).max(16),
   content: z.string().min(16).max(640),
-  feeling: z.enum(feelingEnum)
+  feeling: z.enum(feelingEnum),
+  cs50year: z.preprocess(val => Number(val), z.number().positive().gte(1989, {message: "the year is wrong!"}).lte(new Date().getFullYear(), {message: "the year is wrong!"}))
 }).strict()
 
 const modifyThought = z.object({

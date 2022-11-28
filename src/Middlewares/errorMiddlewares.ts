@@ -12,7 +12,7 @@ const jsonError = (err: RequestError, req: express.Request, res: express.Respons
 
 const errorCatcher = (err: RequestError, req: express.Request, res: express.Response, next: express.NextFunction) => {
   if(err instanceof z.ZodError){
-    res.status(400).json({message: 'error terrible', errorList: err.issues})
+    res.status(400).json({message: 'error terrible de Zod', errorList: err.issues})
   }
   else{
     res.status(err.status || 404).json({message: 'error terrible', error: err})

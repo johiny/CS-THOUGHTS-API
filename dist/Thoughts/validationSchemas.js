@@ -19,7 +19,8 @@ exports.getThoughtbyID = getThoughtbyID;
 const createThought = zod_1.z.object({
     byUsername: zod_1.z.string().regex(new RegExp("^[A-Za-z][A-Za-z0-9]*$"), { message: "username cannot have white spaces" }).min(3).max(16),
     content: zod_1.z.string().min(16).max(640),
-    feeling: zod_1.z.enum(thoughtModel_1.feelingEnum)
+    feeling: zod_1.z.enum(thoughtModel_1.feelingEnum),
+    cs50year: zod_1.z.preprocess(val => Number(val), zod_1.z.number().positive().gte(1989, { message: "the year is wrong!" }).lte(new Date().getFullYear(), { message: "the year is wrong!" }))
 }).strict();
 exports.createThought = createThought;
 const modifyThought = zod_1.z.object({

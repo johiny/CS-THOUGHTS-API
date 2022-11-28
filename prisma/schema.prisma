@@ -16,6 +16,7 @@ model thoughts {
   byUsername String
   content String
   feeling  String
+  cs50year String @default("2022")
   upVotes Int? @default(0)
   DownVotes Int? @default(0)
   createdDate DateTime? @default(now())

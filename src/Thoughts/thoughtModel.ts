@@ -3,6 +3,7 @@ type Thought = {
   byUsername : string
   content : string
   feeling :  "positive" | "negative"
+  cs50year: string
   upVotes : number
   DownVotes : number
   createdDate : string
