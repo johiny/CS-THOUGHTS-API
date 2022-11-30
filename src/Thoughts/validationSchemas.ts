@@ -6,6 +6,7 @@ const thoughtsFilters = z.object({
     upVotes: z.enum(supportedFiltersValues).optional(),
     DownVotes: z.enum(supportedFiltersValues).optional(),
     createdDate: z.enum(supportedFiltersValues).optional().default('desc'),
+    cs50year: z.preprocess(val => Number(val), z.number().positive().gte(1989, {message: "the year is wrong!"}).lte(new Date().getFullYear(), {message: "the year is wrong!"})).optional(),
     skip: z.preprocess(val => Number(val), z.number().positive()).optional(),
     take: z.preprocess(val => Number(val), z.number().positive()).optional()
 }).strict()
