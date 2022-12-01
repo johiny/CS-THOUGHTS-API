@@ -8,6 +8,7 @@ const thoughtsFilters = zod_1.z.object({
     upVotes: zod_1.z.enum(thoughtModel_1.supportedFiltersValues).optional(),
     DownVotes: zod_1.z.enum(thoughtModel_1.supportedFiltersValues).optional(),
     createdDate: zod_1.z.enum(thoughtModel_1.supportedFiltersValues).optional().default('desc'),
+    cs50year: zod_1.z.preprocess(val => Number(val), zod_1.z.number().positive().gte(1989, { message: "the year is wrong!" }).lte(new Date().getFullYear(), { message: "the year is wrong!" })).optional(),
     skip: zod_1.z.preprocess(val => Number(val), zod_1.z.number().positive()).optional(),
     take: zod_1.z.preprocess(val => Number(val), zod_1.z.number().positive()).optional()
 }).strict();
