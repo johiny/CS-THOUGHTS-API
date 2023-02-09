@@ -13,8 +13,8 @@ datasource db {
 
 model thoughts {
   id Int @id @unique @default(autoincrement())
-  byUsername String
-  content String
+  byUsername String @db.VarChar(16)
+  content String @db.VarChar(640)
   feeling  String
   cs50year String @default("2022")
   upVotes Int? @default(0)
