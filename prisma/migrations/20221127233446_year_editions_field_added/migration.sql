@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `thoughts` ADD COLUMN `cs50year` VARCHAR(191) NOT NULL DEFAULT '2022';
